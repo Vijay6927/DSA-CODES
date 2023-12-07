@@ -1,0 +1,141 @@
+Q3.Write a C program to create a single linked list then input a value V, partition it such that all nodes less than V come before nodes greater than or equal to V.
+
+//PROGRAM
+
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+void insertNode(struct Node** head, int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = data;
+    newNode->next = NULL;
+
+    if (*head == NULL) {
+        *head = newNode;
+    } else {
+        struct Node* current = *head;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = newNode;
+    }
+}
+
+void printList(struct Node* head) {
+    struct Node* current = head;
+    while (current != NULL) {
+        printf("%d ", current->data);
+        current = current->next;
+    }
+    printf("\n");
+}
+
+struct Node* partitionList(struct Node* head, int V) {
+    struct Node* lessHead = NULL;
+    struct Node* lessTail = NULL;
+    struct Node* greaterHead = NULL;
+    struct Node* greaterTail = NULL;
+
+    struct Node* current = head;
+
+    while (current != NULL) {
+        if (current->data < V) {
+            if (lessHead == NULL) {
+                lessHead = current;
+                lessTail = current;
+            } else {
+                lessTail->next = current;
+                lessTail = current;
+            }
+        } else {
+            if (greaterHead == NULL) {
+                greaterHead = current;
+                greaterTail = current;
+            } else {
+                greaterTail->next = current;
+                greaterTail = current;
+            }
+        }
+        current = current->next;
+    }
+
+    if (lessTail != NULL) {
+        lessTail->next = greaterHead;
+        return lessHead;
+    } else {
+        return greaterHead;
+    }
+}
+
+void freeList(struct Node* head) {
+    struct Node* current = head;
+    struct Node* next;
+
+    while (current != NULL) {
+        next = current->next;
+        free(current);
+        current = next;
+    }
+}
+
+int main() {
+    struct Node* head = NULL;
+    int choice, n, value, partitionValue;
+
+    do {
+        printf("\nMenu:\n");
+        printf("1. Insert into Linked List\n");
+        printf("2. Partition Linked List\n");
+        printf("3. Print Original Linked List\n");
+        printf("4. Print Partitioned Linked List\n");
+        printf("5. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter the number of elements to insert: ");
+                scanf("%d", &n);
+                printf("Enter the elements to insert:\n");
+                for (int i = 0; i < n; i++) {
+                    scanf("%d", &value);
+                    insertNode(&head, value);
+                }
+                break;
+
+            case 2:
+                printf("Enter the value V for partitioning: ");
+                scanf("%d", &partitionValue);
+                head = partitionList(head, partitionValue);
+                break;
+
+            case 3:
+                printf("Original Linked List: ");
+                printList(head);
+                break;
+
+            case 4:
+                printf("Partitioned Linked List: ");
+                printList(head);
+                break;
+
+            case 5:
+                printf("Exiting the program. Goodbye!\n");
+                break;
+
+            default:
+                printf("Invalid choice. Please enter a valid option.\n");
+        }
+
+    } while (choice != 5);
+
+    // Free the memory allocated for the linked list
+    freeList(head);
+
+    return 0;
+}
