@@ -1,0 +1,111 @@
+Q2. Let A and B be two structures of type Linked List. Write a ‘C ’ program to create a new Linked List ‘S’ that contains elements alternately from A and B beginning with the first element of A. If you run out of elements in one of the lists, then append the remaining
+
+//PROGRAM
+
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+struct Node* newNode(int data) {
+    struct Node* new_node = (struct Node*) malloc(sizeof(struct Node));
+    new_node->data = data;
+    new_node->next = NULL;
+    return new_node;
+}
+
+void append(struct Node** head_ref, int new_data) {
+    struct Node* new_node = newNode(new_data);
+    struct Node* last = *head_ref;
+    if (*head_ref == NULL) {
+        *head_ref = new_node;
+        return;
+    }
+    while (last->next != NULL) {
+        last = last->next;
+    }
+    last->next = new_node;
+    return;
+}
+
+void printList(struct Node* node) {
+    while (node != NULL) {
+        printf("%d ", node->data);
+        node = node->next;
+    }
+}
+
+struct Node* createS(struct Node* A, struct Node* B) {
+    struct Node* S = NULL;
+    while (A != NULL && B != NULL) {
+        append(&S, A->data);
+        A = A->next;
+        append(&S, B->data);
+        B = B->next;
+    }
+    while (A != NULL) {
+        append(&S, A->data);
+        A = A->next;
+    }
+    while (B != NULL) {
+        append(&S, B->data);
+        B = B->next;
+    }
+    return S;
+}
+
+int main() {
+    struct Node* A = NULL;
+    struct Node* B = NULL;
+    struct Node* S = NULL;
+
+    int choice, data;
+
+    do {
+        printf("\nMenu:\n");
+        printf("1. Append to List A\n");
+        printf("2. Append to List B\n");
+        printf("3. Create Linked List S\n");
+        printf("4. Print Linked List S\n");
+        printf("5. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter data to append to List A: ");
+                scanf("%d", &data);
+                append(&A, data);
+                break;
+
+            case 2:
+                printf("Enter data to append to List B: ");
+                scanf("%d", &data);
+                append(&B, data);
+                break;
+
+            case 3:
+                S = createS(A, B);
+                printf("Linked List S created.\n");
+                break;
+
+            case 4:
+                printf("Linked List S: ");
+                printList(S);
+                break;
+
+            case 5:
+                printf("Exiting the program. Goodbye!\n");
+                break;
+
+            default:
+                printf("Invalid choice. Please enter a valid option.\n");
+        }
+
+    } while (choice != 5);
+
+    return 0;
+}
