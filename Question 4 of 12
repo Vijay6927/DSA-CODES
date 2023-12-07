@@ -1,0 +1,133 @@
+
+Q4. Write a C program to create two single linked lists, and then write another function to subtract two numbers represented as linked list.
+
+//PROGRAM
+
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+struct Node* createNode(int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void insertEnd(struct Node** head, int data) {
+    struct Node* newNode = createNode(data);
+    if (*head == NULL) {
+        *head = newNode;
+        return;
+    }
+    struct Node* temp = *head;
+    while (temp->next != NULL) {
+        temp = temp->next;
+    }
+    temp->next = newNode;
+}
+
+void printList(struct Node* head) {
+    while (head != NULL) {
+        printf("%d ", head->data);
+        head = head->next;
+    }
+    printf("\n");
+}
+
+struct Node* subtractLists(struct Node* num1, struct Node* num2) {
+    struct Node* result = NULL;
+    int borrow = 0;
+
+    while (num1 != NULL || num2 != NULL) {
+        int x = (num1 != NULL) ? num1->data : 0;
+        int y = (num2 != NULL) ? num2->data : 0;
+
+        int diff = x - y - borrow;
+        if (diff < 0) {
+            diff += 10;
+            borrow = 1;
+        } else {
+            borrow = 0;
+        }
+
+        insertEnd(&result, diff);
+
+        if (num1 != NULL) num1 = num1->next;
+        if (num2 != NULL) num2 = num2->next;
+    }
+
+    while (result != NULL && result->data == 0) {
+        struct Node* temp = result;
+        result = result->next;
+        free(temp);
+    }
+
+    return result;
+}
+
+void freeList(struct Node* head) {
+    struct Node* temp;
+    while (head != NULL) {
+        temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+int main() {
+    struct Node* num1 = NULL;
+    struct Node* num2 = NULL;
+    struct Node* result = NULL;
+
+    int choice, data;
+
+    do {
+        printf("\nMenu:\n");
+        printf("1. Enter number 1\n");
+        printf("2. Enter number 2\n");
+        printf("3. Subtract\n");
+        printf("4. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter a digit for number 1: ");
+                scanf("%d", &data);
+                insertEnd(&num1, data);
+                break;
+
+            case 2:
+                printf("Enter a digit for number 2: ");
+                scanf("%d", &data);
+                insertEnd(&num2, data);
+                break;
+
+            case 3:
+                printf("Subtraction Result: ");
+                result = subtractLists(num1, num2);
+                printList(result);
+                freeList(result);
+                break;
+
+            case 4:
+                printf("Exiting the program.\n");
+                break;
+
+            default:
+                printf("Invalid choice. Please enter a valid option.\n");
+        }
+
+    } while (choice != 4);
+
+    freeList(num1);
+    freeList(num2);
+
+    return 0;
+}
+
