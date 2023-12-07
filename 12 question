@@ -1,0 +1,104 @@
+Q1. Write a C program to Insert and Delete elements form a Queue using link list ,each node should have the following inforamaion about a product Product_Id(char) , Product_Name(string) , Total_sale(integer),Product_Grade(Char)
+//PROGRAM
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct Product {
+    char Product_Id[10];
+    char Product_Name[50];
+    int Total_sale;
+    char Product_Grade;
+} Product;
+
+typedef struct Node {
+    Product data;
+    struct Node* next;
+} Node;
+
+Node* createNode(Product p) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    newNode->data = p;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void enqueue(Node** queue, Product p) {
+    if (*queue == NULL) {
+        *queue = createNode(p);
+    } else {
+        Node* temp = *queue;
+        while (temp->next != NULL) {
+            temp = temp->next;
+        }
+        temp->next = createNode(p);
+    }
+}
+
+void dequeue(Node** queue) {
+    if (*queue == NULL) {
+        printf("Queue is empty.\n");
+    } else {
+        Node* temp = *queue;
+        *queue = temp->next;
+        free(temp);
+    }
+}
+
+void printQueue(Node* queue) {
+    if (queue == NULL) {
+        printf("Queue is empty.\n");
+    } else {
+        printf("Queue: \n");
+        while (queue != NULL) {
+            printf("Product ID: %s\n", queue->data.Product_Id);
+            printf("Product Name: %s\n", queue->data.Product_Name);
+            printf("Total Sale: %d\n", queue->data.Total_sale);
+            printf("Product Grade: %c\n", queue->data.Product_Grade);
+            queue = queue->next;
+        }
+    }
+}
+
+int main() {
+    Node* queue = NULL;
+    int choice;
+
+    do {
+        printf("\nMenu:\n");
+        printf("1. Enqueue\n");
+        printf("2. Dequeue\n");
+        printf("3. Print Queue\n");
+        printf("4. Quit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1: {
+                Product p;
+                printf("Enter Product ID: ");
+                scanf("%s", p.Product_Id);
+                printf("Enter Product Name: ");
+                scanf("%s", p.Product_Name);
+                printf("Enter Total Sale: ");
+                scanf("%d", &p.Total_sale);
+                printf("Enter Product Grade: ");
+                scanf(" %c", &p.Product_Grade);
+                enqueue(&queue, p);
+                break;
+            }
+            case 2:
+                dequeue(&queue);
+                break;
+            case 3:
+                printQueue(queue);
+                break;
+            case 4:
+                break;
+            default:
+                printf("Invalid choice. Please try again.\n");
+        }
+    } while (choice != 4);
+
+    return 0;
+}
